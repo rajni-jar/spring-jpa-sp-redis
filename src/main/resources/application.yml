@@ -1,0 +1,141 @@
+---
+spring:
+  data:
+  profiles:
+    active: default
+  sleuth:
+    sampler:
+      probability: 1.0
+
+
+oms:
+  error-codes:
+    OSCO-SERVICES-0000: Unknown error. Please contact the developer with the issue
+    OSCO-SERVICES-0001: Invalid request body
+    OSCO-SERVICES-0002: Invalid request parameters
+    OSCO-SERVICES-0003: Data Not Found
+    OSCO-SERVICES-0004: Please provide valid credentials
+    OSCO-SERVICES-0005: Order validation failed
+    OSCO-SERVICES-0006: Product Service unavailable
+
+
+endpoints:
+  health:
+    sensitive: "false"
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+server:
+  port: "8084"
+jasypt:
+  encryptor:
+    algorithm: PBEWithMD5AndDES
+    password: dug
+
+
+#The following 3 properties allow the osco service, which is running locally, to talk to osco service without going thru Eureka.
+#The properties, in order, disable eureka client, instruct Ribbon to not use Eureka, and provide Ribbon with the full path to osco service.
+eureka:
+  client:
+    enabled: false
+
+ribbon:
+  eureka:
+    enabled: false
+
+feign :
+  catalog:
+    url: "https://mycatalogservice.com"
+    contextPath: /catalog-service
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: SEMAPHORE
+          semaphore:
+            maxConcurrentRequests: 100000
+        timeout:
+          enabled: false
+      circuitBreaker:
+        enabled: false
+      fallback:
+        enabled: false
+
+azure:
+  keyvault:
+    client-id: 8c664c4f-ae98-4671-a7b0-87aaf143a2ba
+    client-key: XXAMnk1h7uLFfGu8LbQRbO1dWCctbLCqKiLnNTxXhJM=
+    uri: "https://osco-np-kv.vault.azure.net/"
+store:
+  feature:
+    isUpcEditEnabled: true
+  defaultTimeZone: America/Los_Angeles
+
+---
+allowedProps: "store.feature.isUpcEditEnabled"
+
+---
+# Enable response compression
+server:
+  compression:
+    enabled: true
+    mime-types: application/json
+    # Compress the response only if the response size is at least 1KB
+    min-response-size: 1024
+
+---
+feign:
+  client:
+    config:
+      CatalogClient:
+        loggerLevel: full
+
+---
+spring:
+  jpa:
+    hibernate:
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+okta:
+  discoveryEndpoints:
+    - https://abs-qai.oktapreview.com/oauth2/ause38gc8mIZeAkyj0h7/v1/keys
+    - https://abs-qa1.oktapreview.com/oauth2/ausdvuyculRIYitXg0h7/v1/keys
+
+---
+app:
+  datasource:
+    dxsh:
+      driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      url: "jdbc:sqlserver://localhost;databaseName=dxsh"
+      username: sa
+      password: "Cap123#$"
+    cachedb:
+      driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      url: "jdbc:sqlserver://localhost;databaseName=CacheDB"
+      username: sa
+      password: "Cap123#$"
+    gwdb:
+      driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      url: "jdbc:sqlserver://localhost;databaseName=gwdb"
+      username: sa
+      password: "Cap123#$"
+
+spring:
+  cache:
+    jcache:
+      config: classpath:ehcache.xml
+#spring:
+#  redis:
+#    port: 6379
+#    host: absservicescache.redis.cache.windows.net
+#    password: RBYIzbnfZJVHAoDYZUT4T6EX0zeQKLy4NR3eN01F2Xk=
+...
