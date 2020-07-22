@@ -26,8 +26,13 @@ import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.data.redis.core.RedisKeyValueTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -43,6 +48,11 @@ public class CustomerFavouritesService {
   @Autowired private GwdbCustomerFavoriteRepository gwdbCustomerFavoriteRepository;
   @Autowired private ServiceProxyService serviceProxyService;
   @Autowired private CacheManager cacheManager;
+
+  @Autowired
+  @Qualifier("redisTemplate")
+  private RedisTemplate template;
+
 
   protected boolean isRequestValid(CustomerFavoritesRequest customerFavoritesRequest) {
     if (customerFavoritesRequest == null) {
@@ -72,6 +82,8 @@ public class CustomerFavouritesService {
   private List<CustomerFavoriteProduct> getCustomerFavoriteProducts(int customerId) {
     List<CustomerFavoriteProduct> customerFavoriteProducts = null;
     try {
+      CustomerFavoriteProduct results = (CustomerFavoriteProduct)template.opsForHash().get("product", customerId);
+      log.info("Value from Redis Cache===>{}", results);
       customerFavoriteProducts = customerFavoriteRepository.getCustomerByCustomerId(customerId);
     } catch (Exception ex) {
       log.error(
@@ -96,6 +108,8 @@ public class CustomerFavouritesService {
                             + customerId);
                   });
     }
+
+    template.opsForHash().put("product", customerId, customerFavoriteProducts.get(0));
     return customerFavoriteProducts;
   }
 

@@ -7,9 +7,11 @@ public class GlobalConstants {
 
   public static final String OSCO_SERVICE_API_PREFIX = "/api/v1";
   public static final String CUSTOMER = "/customer";
+
   public static final String CUSTOMER_FAVOURITE_DESCRIPTION = "customer favourite products data";
   public static final String CUSTOMER_REGISTRATION = "/customer/registration";
   public static final String CUSTOMER_API_TAG = "customer";
+  public static final String CUSTOMER_API_TAG_NAME = "customer";
   public static final String CUSTOMER_REGISTRATION_SERVICE = "Customer Registration Service";
   public static final int INVALID_INPUT_VALUE = 400;
   public static final int NOT_AUTHORIZED = 403;

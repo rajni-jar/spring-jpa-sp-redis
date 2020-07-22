@@ -129,13 +129,13 @@ app:
       username: sa
       password: "Cap123#$"
 
-spring:
-  cache:
-    jcache:
-      config: classpath:ehcache.xml
 #spring:
-#  redis:
-#    port: 6379
-#    host: absservicescache.redis.cache.windows.net
-#    password: RBYIzbnfZJVHAoDYZUT4T6EX0zeQKLy4NR3eN01F2Xk=
+#  cache:
+#    jcache:
+#      config: classpath:ehcache.xml
+spring:
+  redis:
+    port: 6379
+    host: absservicescache.redis.cache.windows.net
+    password: RBYIzbnfZJVHAoDYZUT4T6EX0zeQKLy4NR3eN01F2Xk=
 ...
